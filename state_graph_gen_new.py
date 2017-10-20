@@ -180,7 +180,7 @@ def state_description (state):
 def graph_gen():
   '''This creates the state graph with random variation of inflow'''
   
-  dot = Digraph(comment = 'State Graph')
+  dot = Digraph('State Graph')
   
   change = 1
   vizited = []
@@ -201,10 +201,10 @@ def graph_gen():
       
       for state in next_states:
         if state not in in_graph:
-          dot.node (state_label(state), state_description(state), shape = 'box')
+          dot.node(state_label(state), state_description(state), shape = 'box')
           in_graph.append(state)
         
-        dot.edge(state_label(cur_state), state_label(state), constraint='false')
+        dot.edge(state_label(cur_state), state_label(state))
   
   dot.render('state_graph.gv', view=True)
   
