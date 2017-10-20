@@ -108,13 +108,13 @@ def next_state (state):
   
   # If no such states can be added, then do other changes
   if len(new_states) == 0:
-    # If derivative is positive, and quantity is at +, then it can go to max
-    # Similarly derivative is -, and quantity is +, then it can go to 0
+    # If derivative is positive, and quantity is at 0/+, then it can go to +/max
+    # Similarly derivative is -, and quantity is +/M, then it can go to 0/+
     for quant_name, quant_val in state.iteritems():
       if quant_name != 'inflow'and quant_val['der'] == '+' and quant_val['mag'] == '+':
         next_val = {'mag': 'M', 'der': '0'}
         new_states = add_stabilised_state(new_states, state, quant_name, next_val)
-      if quant_val['der'] == '+' and quant_val['mag'] == '0':
+      elif quant_val['der'] == '+' and quant_val['mag'] == '0':
         next_val = {'mag': '+', 'der': '+'}
         new_states = add_stabilised_state(new_states, state, quant_name, next_val)
       elif quant_val['der'] == '-' and quant_val['mag'] == '+':
@@ -124,22 +124,26 @@ def next_state (state):
         next_val = {'mag': '+', 'der': '-'}
         new_states = add_stabilised_state(new_states, state, quant_name, next_val)
     
-    # Can change the derivative ofthe inflow from +/- to 0, and from 0 to either
-    if state['inflow']['der'] == '0':
-      next_val = copy.deepcopy(state['inflow'])
-      next_val['der'] = '+'
-      new_states = add_stabilised_state(new_states, state, 'inflow', next_val)
+    # Can change the derivative of the inflow from +/- to 0, and from 0 to either
+    for quant_name, quant_val in state.iteritems():
+      if quant_val['der'] == '0':
+        next_val = copy.deepcopy(quant_val)
+        next_val['der'] = '+'
+        new_states = add_stabilised_state(new_states, state, quant_name, next_val)
       
-      next_val = copy.deepcopy(state['inflow'])
-      next_val['der'] = '-'
-      new_states = add_stabilised_state(new_states, state, 'inflow', next_val)
+        next_val = copy.deepcopy(quant_val)
+        next_val['der'] = '-'
+        new_states = add_stabilised_state(new_states, state, quant_name, next_val)
       
-    else:
-      next_val = copy.deepcopy(state['inflow'])
-      next_val['der'] = '0'
-      new_states = add_stabilised_state(new_states, state, 'inflow', next_val)
+      else:
+        next_val = copy.deepcopy(quant_val)
+        next_val['der'] = '0'
+        new_states = add_stabilised_state(new_states, state, quant_name, next_val)
   
   return new_states
+
+
+
 
 # From here on, all functions are for graph generation purposes
 def start_state ():
@@ -164,8 +168,12 @@ def state_description (state):
   '''Retruns the description of a state'''
   
   descn = ''
+  line_breake = 0
   for quant_name, quant_val in state.iteritems():
+    if line_breake:
+      descn = descn + '\\n'
     descn = descn + quant_name + ': (' +  quant_val['mag'] + ', ' + quant_val['der'] + ')  '
+    line_breake = 1
   
   return descn
 
@@ -193,12 +201,11 @@ def graph_gen():
       
       for state in next_states:
         if state not in in_graph:
-          dot.node (state_label(state), state_description(state))
+          dot.node (state_label(state), state_description(state), shape = 'box')
           in_graph.append(state)
         
         dot.edge(state_label(cur_state), state_label(state), constraint='false')
   
-  print len(in_graph) 
   dot.render('state_graph.gv', view=True)
   
   return len(vizited)
