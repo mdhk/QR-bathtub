@@ -66,26 +66,28 @@ class State():
         descr += "\n"
         return descr
 
-class Reasoner():
-    def __init__(self, initial_state):
-        self.initial_state = initial_state
-        self.states = [initial_state]
-        self.transitions = []
-
-    def equivalent(self, state1, state2):
-        if (state1.inflow.M == state2.inflow.M) and (state1.inflow.d == state2.inflow.d) and \
-           (state1.volume.M == state2.volume.M) and (state1.volume.d == state2.volume.d) and \
-           (state1.height.M == state2.height.M) and (state1.height.d == state2.height.d) and \
-           (state1.pressure.M == state2.pressure.M) and (state1.pressure.d == state2.pressure.d) and \
-           (state1.outflow.M == state2.outflow.M) and (state1.outflow.d == state2.outflow.d):
+    def equivalent(self, other):
+        if (self.inflow.M == other.inflow.M) and (self.inflow.d == other.inflow.d) and \
+           (self.volume.M == other.volume.M) and (self.volume.d == other.volume.d) and \
+           (self.height.M == other.height.M) and (self.height.d == other.height.d) and \
+           (self.pressure.M == other.pressure.M) and (self.pressure.d == other.pressure.d) and \
+           (self.outflow.M == other.outflow.M) and (self.outflow.d == other.outflow.d):
             return True
         else:
             return False
 
+class Reasoner():
+    def __init__(self, initial_state, dIN_behaviour):
+        self.initial_state = initial_state
+        self.dIN_behaviour = dIN_behaviour
+        self.dIN_index = 0
+        self.states = [initial_state]
+        self.transitions = []
+
     def any_magn_changes(self, state):
         quants_to_change = []
         for q in state.quantities:
-            if (q.M != q.d) or \
+            if (q.M != MAX and q.M != q.d) or \
                (q.name != 'Inflow' and (q.M == POS and q.d == POS)) or \
                (q.M == NEG and q.d == NEG):
                 quants_to_change.append(q)
@@ -94,30 +96,66 @@ class Reasoner():
         else:
             return None
 
+    def any_max_magn(self, state):
+        for q in state.quantities:
+            if q.M == MAX:
+                return True
+        return False
+
+    def causality(self, old_state):
+        if old_state.inflow ==
+
     def reasoning_step(self, previous_state):
         next_state = copy.deepcopy(previous_state)
         next_state.number += 1
+        new_state = None
 
         if self.any_magn_changes(next_state):
+            #print('magn')
             for q in self.any_magn_changes(next_state):
                 q.change_magn()
             self.states.append(next_state)
             self.transitions.append((previous_state, next_state))
-            return next_state
+            new_state = next_state
+
         else:
+            #print('else')
             influence('+', next_state.inflow, next_state.volume)
             influence('-', next_state.outflow, next_state.volume)
-            proportional('+', next_state.height, next_state.volume)
+            proportional('+', next_state.volume, next_state.height)
             proportional('+', next_state.height, next_state.pressure)
             proportional('+', next_state.pressure, next_state.outflow)
             correspondence('M', next_state.volume, next_state.outflow, next_state.height, next_state.pressure)
             correspondence('0', next_state.volume, next_state.outflow, next_state.height, next_state.pressure)
-            if self.equivalent(previous_state, next_state):
-                print("Previous and next state are equivalent")
-            else:
-                self.states.append(next_state)
-                self.transitions.append((previous_state, next_state))
-                return next_state
+            self.states.append(next_state)
+            self.transitions.append((previous_state, next_state))
+            new_state = next_state
+
+        if self.any_max_magn(next_state):
+            #print('max')
+            next_state.inflow.d = self.dIN_behaviour[self.dIN_index + 1]
+            next_state.volume.d = ZERO
+            next_state.height.d = ZERO
+            next_state.pressure.d = ZERO
+            next_state.outflow.d = ZERO
+            new_state = next_state
+
+        if new_state.equivalent(previous_state):
+            print("Previous and next states are equivalent")
+            return None
+        else:
+            return new_state
+
+    def do_reasoning(self):
+        counter = 0
+        print(self.initial_state.str())
+        next_state = self.reasoning_step(self.initial_state)
+        while next_state and counter < 10:
+            print(next_state.str())
+            next_state = self.reasoning_step(next_state)
+            counter += 1
+
+        return self.states
 
 
 
@@ -166,9 +204,11 @@ def influence(sign, Q1, Q2):
         Q2.d = NEG
 
 def proportional(sign, Q1, Q2):
-    if sign == '+' and (Q1.d == POS or Q2.d == POS):
-        Q1.d = POS
-        Q2.d = POS
+    if sign == '+':
+        if Q1.d == POS:
+            Q2.d = POS
+        if Q1.d == ZERO:
+            Q2.d = ZERO
     # elif sign == '-' and Q1.d == POS:
     #     Q2.d = NEG
 
@@ -185,16 +225,16 @@ def main():
 
     initial_state = State(inflow, volume, height, pressure, outflow)
 
-    print(initial_state.str())
-    reasoner = Reasoner(initial_state)
-
-    next_state = reasoner.reasoning_step(initial_state)
-    print(next_state.str())
-
-    third_state = reasoner.reasoning_step(next_state)
-    print(third_state.str())
-
-
+    reasoner = Reasoner(initial_state, dIN_list)
+    reasoner.do_reasoning()
+    # print(initial_state.str())
+    # reasoner = Reasoner(initial_state)
+    #
+    # next_state = reasoner.reasoning_step(initial_state)
+    # print(next_state.str())
+    #
+    # third_state = reasoner.reasoning_step(next_state)
+    # print(third_state.str())
 
 if __name__ == "__main__":
     main()
