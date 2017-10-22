@@ -1,0 +1,62 @@
+digraph "State Graph" {
+	"000+000000" [label="inflow: (0, +)
+volume: (0, 0)
+height: (0, 0)
+pressure: (0, 0)
+outflow: (0, 0)" shape=box]
+	0000000000 -> "000+000000" [color=red]
+	"0+++0+0+0+" [label="inflow: (+, +)
+volume: (0, +)
+height: (0, +)
+pressure: (0, +)
+outflow: (0, +)" shape=box]
+	"000+000000" -> "0+++0+0+0+" [color=red]
+	"++++++++++" [label="inflow: (+, +)
+volume: (+, +)
+height: (+, +)
+pressure: (+, +)
+outflow: (+, +)" shape=box]
+	"0+++0+0+0+" -> "++++++++++" [color=red]
+	"+++0++++++" [label="inflow: (+, 0)
+volume: (+, +)
+height: (+, +)
+pressure: (+, +)
+outflow: (+, +)" shape=box]
+	"++++++++++" -> "+++0++++++" [color=red]
+	"M0+0M0M0M0" [label="inflow: (+, 0)
+volume: (M, 0)
+height: (M, 0)
+pressure: (M, 0)
+outflow: (M, 0)" shape=box]
+	"+++0++++++" -> "M0+0M0M0M0" [color=red]
+	"M0+-M0M0M0" [label="inflow: (+, -)
+volume: (M, 0)
+height: (M, 0)
+pressure: (M, 0)
+outflow: (M, 0)" shape=box]
+	"M0+0M0M0M0" -> "M0+-M0M0M0" [color=red]
+	"M-+-M-M-M-" [label="inflow: (+, -)
+volume: (M, -)
+height: (M, -)
+pressure: (M, -)
+outflow: (M, -)" shape=box]
+	"M0+-M0M0M0" -> "M-+-M-M-M-" [color=red]
+	"+-+-+-+-+-" [label="inflow: (+, -)
+volume: (+, -)
+height: (+, -)
+pressure: (+, -)
+outflow: (+, -)" shape=box]
+	"M-+-M-M-M-" -> "+-+-+-+-+-" [color=red]
+	"+-00+-+-+-" [label="inflow: (0, 0)
+volume: (+, -)
+height: (+, -)
+pressure: (+, -)
+outflow: (+, -)" shape=box]
+	"+-+-+-+-+-" -> "+-00+-+-+-" [color=red]
+	0000000000 [label="inflow: (0, 0)
+volume: (0, 0)
+height: (0, 0)
+pressure: (0, 0)
+outflow: (0, 0)" shape=box]
+	"+-00+-+-+-" -> 0000000000 [color=red]
+}
