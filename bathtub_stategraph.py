@@ -6,9 +6,10 @@ import sys
 import copy
 from graphviz import Digraph
 import random
+random.seed(2)
 
 def get_state ():
-  '''This let the user specify the entireinitial state'''
+  '''This let the user specify the entire initial state'''
   
   inflw_mag = raw_input("Initial magnitude of the inflow: ")
   inflw_der = raw_input("Initial derivative of the inflow: ")
@@ -124,7 +125,8 @@ def add_stabilised_state (l, state, quant_name, quant_val):
         is_valid = 0
     if new_state['inflow'] == {'mag': '+', 'der': '-'} and new_state['volume'] == {'mag': '+', 'der': '+'}:
         is_valid = 0
-        
+    if new_state['inflow'] == {'mag': '0', 'der': '+'} and new_state['volume'] == {'mag': '+', 'der': '0'}:
+        is_valid = 0
     if is_valid:
       l.append(new_state)
   
@@ -262,7 +264,7 @@ def create_trace(dot, queue):
 
     if cur_state not in traced_states:
       next_states = next_state(cur_state)
-      new_state = next_states[0]
+      new_state = random.choice(next_states)
       queue.append(new_state)
       if cur_state not in traced_states and (traced_states == [] or not illegal_transition(traced_states[-1], new_state)):
         desc = state_description(new_state)
@@ -275,7 +277,7 @@ def create_trace(dot, queue):
   return dot, traced_states
 
 
-def graph_gen(trace=False):
+def graph_gen(start=start_state(), trace=False):
   '''This creates the state graph with random variation of inflow'''
 
   dot = Digraph('State Graph')
@@ -283,7 +285,6 @@ def graph_gen(trace=False):
   change = 1
   vizited = []
   in_graph = []
-  start = start_state()
   queue = [start]
   dot.node(state_label(start), state_description(start))
 
@@ -312,14 +313,12 @@ def graph_gen(trace=False):
 
   if trace:
     dot.clear()
-    start = start_state()
     queue = [start]
     dot, traced_states = create_trace(dot, queue)
     counter = 0
-    while (traced_states == [] or traced_states[-1]['inflow']['mag'] == '+') and counter < 100:
-      dot.clear()
-      start = start_state()
+    while (traced_states == [] or traced_states[-1]['inflow']['mag'] == '+' or {'inflow' : {'mag': '+', 'der': '+'}, 'volume': {'mag': '+', 'der': '0'}, 'height': {'mag': '+', 'der': '0'}, 'pressure': {'mag': '+', 'der': '0'}, 'outflow': {'mag': '+', 'der': '0'}} in traced_states) and counter < 100:
       queue = [start]
+      dot.clear()
       dot, traced_states = create_trace(dot, queue)
       counter += 1
     if counter >= 100:
