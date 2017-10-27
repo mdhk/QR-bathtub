@@ -139,7 +139,7 @@ def next_state (state):
     # The derivative of the volume may change from 0 because the inflow varries
     # e.g. if inflow has (+, -) maybe it is not "so positive" any more, so the 
     #      influence on the vloume decreases
-    if state['outflow']['der'] == '0':
+    if state['volume']['der'] == '0':
       if state['inflow']['der'] == '-':
         next_val = copy.deepcopy(state['volume'])
         next_val['der'] = '-'
@@ -158,16 +158,11 @@ def next_state (state):
       if quant_name != 'inflow'and quant_val['der'] == '+' and quant_val['mag'] == '+':
         next_val = {'mag': 'M', 'der': '0'}
         new_states = add_stabilised_state(new_states, state, quant_name, next_val)
-      elif quant_val['der'] == '+' and quant_val['mag'] == '0':
-        next_val = {'mag': '+', 'der': '+'}
         new_states = add_stabilised_state(new_states, state, quant_name, next_val)
       elif quant_val['der'] == '-' and quant_val['mag'] == '+':
         next_val = {'mag': '0', 'der': '0'}
         new_states = add_stabilised_state(new_states, state, quant_name, next_val)
-      elif quant_val['der'] == '-' and quant_val['mag'] == 'M':
-        next_val = {'mag': '+', 'der': '-'}
-        new_states = add_stabilised_state(new_states, state, quant_name, next_val)
-    
+
     # Variate the inflow
     # Can change the derivative of the inflow from +/- to 0, and from 0 to either
     if quant_val['der'] == '0':
