@@ -152,8 +152,8 @@ def next_state (state):
   # If no such states can be added, then do other changes
   if len(new_states) == 0:
     # Derivatives determine changes in magnitude:
-    # If derivative is positive, and quantity is at 0/+, then it can go to +/max
-    # Similarly derivative is -, and quantity is +/M, then it can go to 0/+
+    # If derivative is positive, and quantity is at +, then it can go to max
+    # Similarly derivative is -, and quantity is +, then it can go to 0
     for quant_name, quant_val in state.iteritems():
       if quant_name != 'inflow'and quant_val['der'] == '+' and quant_val['mag'] == '+':
         next_val = {'mag': 'M', 'der': '0'}
