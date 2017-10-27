@@ -260,7 +260,6 @@ def graph_gen(start=start_state(), trace=False):
   
   change = 1
   vizited = []
-  start = start_state()
   in_graph = [start]
   queue = [start]
   dot.node (state_label(start), state_description(start, 1), shape = 'box')
