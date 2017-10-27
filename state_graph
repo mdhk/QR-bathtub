@@ -1,0 +1,116 @@
+digraph "State Graph" {
+	0000000000 [label="ID = 1\ninflow: (0, 0)  
+volume: (0, 0)  
+outflow: (0, 0)  
+pressure: (0, 0)  
+height: (0, 0)  " shape=box]
+	"0+00000000" [label="ID = 2\ninflow: (0, +)  
+volume: (0, 0)  
+outflow: (0, 0)  
+pressure: (0, 0)  
+height: (0, 0)  " shape=box]
+	0000000000 -> "0+00000000"
+	"++0+0+0+0+" [label="ID = 3\ninflow: (+, +)  
+volume: (0, +)  
+outflow: (0, +)  
+pressure: (0, +)  
+height: (0, +)  " shape=box]
+	"0+00000000" -> "++0+0+0+0+"
+	"++++++++++" [label="ID = 4\ninflow: (+, +)  
+volume: (+, +)  
+outflow: (+, +)  
+pressure: (+, +)  
+height: (+, +)  " shape=box]
+	"++0+0+0+0+" -> "++++++++++"
+	"++M0M0M0M0" [label="ID = 5\ninflow: (+, +)  
+volume: (M, 0)  
+outflow: (M, 0)  
+pressure: (M, 0)  
+height: (M, 0)  " shape=box]
+	"++++++++++" -> "++M0M0M0M0"
+	"+0++++++++" [label="ID = 6\ninflow: (+, 0)  
+volume: (+, +)  
+outflow: (+, +)  
+pressure: (+, +)  
+height: (+, +)  " shape=box]
+	"++++++++++" -> "+0++++++++"
+	"+0M0M0M0M0" [label="ID = 7\ninflow: (+, 0)  
+volume: (M, 0)  
+outflow: (M, 0)  
+pressure: (M, 0)  
+height: (M, 0)  " shape=box]
+	"++M0M0M0M0" -> "+0M0M0M0M0"
+	"+0++++++++" -> "+0M0M0M0M0"
+	"+0++++++++" -> "++++++++++"
+	"+-++++++++" [label="ID = 8\ninflow: (+, -)  
+volume: (+, +)  
+outflow: (+, +)  
+pressure: (+, +)  
+height: (+, +)  " shape=box]
+	"+0++++++++" -> "+-++++++++"
+	"+0M0M0M0M0" -> "++M0M0M0M0"
+	"+-M0M0M0M0" [label="ID = 9\ninflow: (+, -)  
+volume: (M, 0)  
+outflow: (M, 0)  
+pressure: (M, 0)  
+height: (M, 0)  " shape=box]
+	"+0M0M0M0M0" -> "+-M0M0M0M0"
+	"+-++++++++" -> "+-M0M0M0M0"
+	"00+-+-+-+-" [label="ID = 10\ninflow: (0, 0)  
+volume: (+, -)  
+outflow: (+, -)  
+pressure: (+, -)  
+height: (+, -)  " shape=box]
+	"+-++++++++" -> "00+-+-+-+-"
+	"+-++++++++" -> "+0++++++++"
+	"+-M-M-M-M-" [label="ID = 11\ninflow: (+, -)  
+volume: (M, -)  
+outflow: (M, -)  
+pressure: (M, -)  
+height: (M, -)  " shape=box]
+	"+-M0M0M0M0" -> "+-M-M-M-M-"
+	"00+-+-+-+-" -> 0000000000
+	"0++-+-+-+-" [label="ID = 12\ninflow: (0, +)  
+volume: (+, -)  
+outflow: (+, -)  
+pressure: (+, -)  
+height: (+, -)  " shape=box]
+	"00+-+-+-+-" -> "0++-+-+-+-"
+	"+-+-+-+-+-" [label="ID = 13\ninflow: (+, -)  
+volume: (+, -)  
+outflow: (+, -)  
+pressure: (+, -)  
+height: (+, -)  " shape=box]
+	"+-M-M-M-M-" -> "+-+-+-+-+-"
+	"+++-+-+-+-" [label="ID = 14\ninflow: (+, +)  
+volume: (+, -)  
+outflow: (+, -)  
+pressure: (+, -)  
+height: (+, -)  " shape=box]
+	"0++-+-+-+-" -> "+++-+-+-+-"
+	"+-0+0+0+0+" [label="ID = 15\ninflow: (+, -)  
+volume: (0, +)  
+outflow: (0, +)  
+pressure: (0, +)  
+height: (0, +)  " shape=box]
+	"+-+-+-+-+-" -> "+-0+0+0+0+"
+	"+-+-+-+-+-" -> "00+-+-+-+-"
+	"+0+-+-+-+-" [label="ID = 16\ninflow: (+, 0)  
+volume: (+, -)  
+outflow: (+, -)  
+pressure: (+, -)  
+height: (+, -)  " shape=box]
+	"+-+-+-+-+-" -> "+0+-+-+-+-"
+	"+++-+-+-+-" -> "++0+0+0+0+"
+	"+++-+-+-+-" -> "+0+-+-+-+-"
+	"+-0+0+0+0+" -> "+-++++++++"
+	"+00+0+0+0+" [label="ID = 17\ninflow: (+, 0)  
+volume: (0, +)  
+outflow: (0, +)  
+pressure: (0, +)  
+height: (0, +)  " shape=box]
+	"+0+-+-+-+-" -> "+00+0+0+0+"
+	"+0+-+-+-+-" -> "+++-+-+-+-"
+	"+0+-+-+-+-" -> "+-+-+-+-+-"
+	"+00+0+0+0+" -> "+0++++++++"
+}
